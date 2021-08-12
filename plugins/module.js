@@ -11,13 +11,13 @@
  * @module
  */
 const assert = require('assert');
-const {PACKAGE_NAME,CLUSTER_NAME} = require('../lib/constants');
-const {extractCluster, defineCluster} = require('../lib/utils');
-const {EngineModule} = require('brick-engine'); // eslint-disable-line no-unused-vars
-const {Engine} = require('brick-engine');
-const {InstallPlugin} = require('brick-engine');
+const { PACKAGE_NAME, CLUSTER_NAME } = require('../lib/constants');
+const { extractCluster, replaceCluster } = require('./utils');
+const { EngineModule } = require('brick-engine'); // eslint-disable-line no-unused-vars
+const { Engine, copyMetadata } = require('brick-engine');
+const { InstallPlugin } = require('brick-engine');
 
-const MODULE_KEY = `${PACKAGE_NAME}:plugins:module`;
+const MODULE_KEY = `${PACKAGE_NAME}:plugins:ModulePlugin`;
 exports.MODULE_KEY = MODULE_KEY;
 const debug = require('debug')(MODULE_KEY);
 
@@ -35,15 +35,15 @@ class ModulePlugin {
    * @param {Engine} engine 引擎实例
    * @param {Object} env 环境变量实例
    */
-  constructor(installPlugin,engine,env = process.env) {
-    
-    debug('constructor %s %s', installPlugin,engine,env);
+  constructor(installPlugin, engine, env = process.env) {
+
+    debug('constructor %s %s', installPlugin, engine, env);
 
     assert(
       installPlugin instanceof InstallPlugin,
       `[${MODULE_KEY}] constructor Error: wrong installPlugin`
     );
-    
+
     assert(
       engine instanceof Engine,
       `[${MODULE_KEY}] constructor Error: wrong engine`
@@ -57,7 +57,7 @@ class ModulePlugin {
     this[INSTALL_PLUGIN] = installPlugin;
     this[ENGINE] = engine;
     this[ENV] = env;
-    
+
   }
 
   /**
@@ -67,43 +67,41 @@ class ModulePlugin {
    * @param {EngineModule} module 使用的模块
    * @param {EngineInstallOpts} opts 引擎模块安装可选参数
    */
-  async use(module,opts) {
-
-    debug('use %s %s', module,opts);
+  async use(module, opts) {
+    debug('use %s %s', module, opts);
 
     const promises = [];
+
     let clusterQueue = extractCluster(module);
-    const hasCluster = clusterQueue.length>0;
-    if (!hasCluster) {
+
+    let _opts;
+    if (clusterQueue.length <= 0) {
       clusterQueue = extractCluster(opts);
+      _opts = opts;
+    } else {
+      _opts = { ...opts };
+      copyMetadata(_opts, opts);
+      replaceCluster(_opts, ...clusterQueue);
     }
 
     const env = this[ENV];
-    const isClusterModule = clusterQueue.length >0 ? clusterQueue.some(_=_.name === env[CLUSTER_NAME]):env[CLUSTER_NAME] === undefined;
-
-    let _opts;
-    if (hasCluster) {
-      _opts = defineCluster({},...clusterQueue);
-    }else{
-      _opts = opts;
-    }
-    
-    if(isClusterModule){
+    const isClusterModule = clusterQueue.length > 0 ? clusterQueue.some(_ => _.name === env[CLUSTER_NAME]) : env[CLUSTER_NAME] === undefined;
+    if (isClusterModule) {
       const engine = this[ENGINE];
-      promises.push(engine.install(module));
+      promises.push(engine.install(module, _opts));
     }
 
     const installPlugin = this[INSTALL_PLUGIN];
-    if (installPlugin.match(module,_opts)) {
-      promises.push(installPlugin.use(module,_opts));
+    if (installPlugin.match(module, _opts)) {
+      promises.push(installPlugin.use(module, _opts));
     }
 
-    if (promises.length>0) {
+    if (promises.length > 0) {
       await Promise.all(promises);
     }
-    
+
   }
-  
+
 }
 
 exports.ModulePlugin = ModulePlugin;

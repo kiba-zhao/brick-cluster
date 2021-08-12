@@ -10,12 +10,12 @@
  * @module
  */
 const assert = require('assert');
-const {PACKAGE_NAME} = require('../lib/constants');
-const {extractCluster} = require('../lib/utils');
-const {EngineModule} = require('brick-engine'); // eslint-disable-line no-unused-vars
-const {Cluster} = require('../lib/cluster');
+const { PACKAGE_NAME } = require('../lib/constants');
+const { extractCluster } = require('./utils');
+const { EngineModule } = require('brick-engine'); // eslint-disable-line no-unused-vars
+const { Cluster } = require('../lib/cluster');
 
-const MODULE_KEY = `${PACKAGE_NAME}:plugins:cluster`;
+const MODULE_KEY = `${PACKAGE_NAME}:plugins:ClusterPlugin`;
 exports.MODULE_KEY = MODULE_KEY;
 const debug = require('debug')(MODULE_KEY);
 
@@ -30,7 +30,7 @@ class ClusterPlugin {
    * @param {Cluster} cluster 集群实例
    */
   constructor(cluster) {
-    
+
     debug('constructor %s %s', cluster);
 
     assert(
@@ -38,8 +38,8 @@ class ClusterPlugin {
       `[${MODULE_KEY}] constructor Error: wrong cluster`
     );
 
-    this[Cluster] = cluster;
-    
+    this[CLUSTER] = cluster;
+
   }
 
   /**
@@ -53,10 +53,10 @@ class ClusterPlugin {
     debug('match %s', module);
 
     const clusterQueue = extractCluster(module);
-    return clusterQueue.length >0 && clusterQueue.some(_=_.name !== undefined);
-    
+    return clusterQueue.length > 0 && clusterQueue.some(_ => _.name !== undefined);
+
   }
-  
+
   /**
    *使用模块方法
    * @see {@link module:lib/engine~EngineModule} 引擎模块类型
@@ -69,14 +69,14 @@ class ClusterPlugin {
     /** @type {Cluster} **/
     const cluster = this[CLUSTER];
     const metadataQueue = extractCluster(module);
-    for(let {name,env} of metadataQueue) {
+    for (const { name, env } of metadataQueue) {
       if (name === undefined) {
         continue;
       }
-      cluster.defineWorker(name,env);
+      cluster.defineWorker(name, env);
     }
   }
-  
+
 }
 
 exports.ClusterPlugin = ClusterPlugin;

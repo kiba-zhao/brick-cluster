@@ -8,54 +8,38 @@
  */
 'use strict';
 
-
 const { PACKAGE_NAME } = require('../lib/constants');
-const { APPLICATION_SCOPE } = require('brick-engine/lib/constants');
-const {extract,Engine,Provider,InstallPlugin,MountPlugin,InjectPlugin} = require('brick-engine');
-const {Cluster} = require('../lib');
-const {ClusterPlugin,ModulePlugin} = require('../plugins');
+const { Cluster, createMasterEngine, createWorkerEngine } = require('../lib');
+const { setup, Provider } = require('brick-engine');
 
 const MODULE_KEY = `${PACKAGE_NAME}:bin`;
 const debug = require('debug')(MODULE_KEY);
 
-const processArgs = process.argv.length > 2 ? process.argv.slice(2) : [ process.cwd() ];
+async function main(appPaths) {
 
-async function main(args) {
+  debug('main %s', appPaths);
 
-  debug('main: %s', args.join(','));
-
-  const appPaths = [];
-  let isWorkerMode = false;
-  for (let arg of processArgs) {
-    if (arg.startsWith('--')) {
-      isWorkerMode = true;
+  let isWorker = false;
+  const apps = [];
+  for (const appPath of appPaths) {
+    if (appPath === '--worker' && !isWorker) {
+      isWorker = true;
       continue;
     }
-    appPaths.push(arg);
+
+    apps.push(require(appPath));
   }
-  const modules = appPaths.map(_ => require(_));
-  
-  // const engine = await createEngine();
-  // const apps = [];
-  // for (const m of modules) {
-  //   const engineModules = extract(m, { scope: APPLICATION_SCOPE });
-  //   for (const engineModule of engineModules) {
-  //     const app = engine.install(engineModule);
-  //     apps.push(app);
-  //   }
-  // }
-  // await Promise.all(apps);
+
+  const provider = new Provider();
+  const engine = isWorker ? await createWorkerEngine(provider) : await createMasterEngine(appPaths, provider);
+  await setup(engine, ...apps);
+
+  if (!isWorker) {
+    /** @type {Cluster[]} **/
+    const [ cluster ] = await provider.require({ id: Cluster });
+    cluster.start();
+  }
 
 }
 
-main(processArgs).catch(e => console.error(e));
-
-function createMasterEngine() {
-  
-}
-
-function createWorkerEngine() {
-  
-}
-
-
+main(process.argv.length > 2 ? process.argv.slice(2) : [ process.cwd() ]).catch(e => console.error(e));
