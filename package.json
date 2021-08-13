@@ -1,6 +1,6 @@
 {
   "name": "brick-cluster",
-  "version": "0.8.0",
+  "version": "0.0.0",
   "description": "cluster plugin package",
   "bin": {
     "brick-engine": "./bin/brick-cluster.js"

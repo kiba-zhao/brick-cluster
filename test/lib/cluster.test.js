@@ -52,7 +52,7 @@ describe('lib/cluster', () => {
 
         expect(cluster.workersCountMap.size).toBe(0);
 
-        processEnv[name] = faker.datatype.string();
+        processEnv[name] = faker.random.word();
         expect(cluster.workersCountMap.size).toBe(0);
 
         processEnv[name] = -1 * faker.datatype.number();

@@ -303,7 +303,7 @@ describe('plugins/module', () => {
         beforeEach(() => {
           target = {};
           opts = {};
-          workerName = Symbol('WORKER_NAME');
+          workerName = faker.random.word();
           plugin = new ModulePlugin(installPlugin, engine, { [CLUSTER_NAME]: workerName });
         });
 
