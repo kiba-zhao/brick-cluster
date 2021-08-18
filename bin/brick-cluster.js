@@ -9,8 +9,8 @@
 'use strict';
 
 const { PACKAGE_NAME } = require('../lib/constants');
-const { Cluster, createMasterEngine, createWorkerEngine } = require('../lib');
-const { setup, Provider } = require('brick-engine');
+const { createMasterEngine, createWorkerEngine } = require('../lib');
+const { setup, Engine, Provider, ReadyPlugin } = require('brick-engine');
 
 const MODULE_KEY = `${PACKAGE_NAME}:bin`;
 const debug = require('debug')(MODULE_KEY);
@@ -33,12 +33,9 @@ async function main(appPaths) {
   const provider = new Provider();
   const engine = isWorker ? await createWorkerEngine(provider) : await createMasterEngine(appPaths, provider);
   await setup(engine, ...apps);
-
-  if (!isWorker) {
-    /** @type {Cluster[]} **/
-    const [ cluster ] = await provider.require({ id: Cluster });
-    cluster.start();
-  }
+  /** @type {Engine[]} **/
+  const [ runtimeEngine ] = await provider.require({ id: Engine });
+  await runtimeEngine.mount(ReadyPlugin, { deps: [{ id: Provider }] });
 
 }
 
