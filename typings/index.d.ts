@@ -6,4 +6,5 @@ import { extractCluster } from "./plugins";
 import { replaceCluster } from "./plugins";
 import { ClusterPlugin } from "./plugins";
 import { ModulePlugin } from "./plugins";
-export { Cluster, createMasterEngine, createWorkerEngine, defineCluster, extractCluster, replaceCluster, ClusterPlugin, ModulePlugin };
+import { clusterSetup } from "./lib";
+export { Cluster, createMasterEngine, createWorkerEngine, defineCluster, extractCluster, replaceCluster, ClusterPlugin, ModulePlugin, clusterSetup };
