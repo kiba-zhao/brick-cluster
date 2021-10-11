@@ -32,6 +32,10 @@ async function main(appPaths) {
 
   const provider = new Provider();
   const engine = isWorker ? await createWorkerEngine(provider) : await createMasterEngine(appPaths, provider);
+
+  if (apps.length <= 0) {
+    apps.push(process.cwd());
+  }
   await clusterSetup(provider, engine, apps);
 }
 
