@@ -8,7 +8,7 @@
 
 const { Provider, Engine, InstallPlugin, MountPlugin, InjectPlugin } = require('brick-engine');
 const { ModulePlugin, ClusterPlugin } = require('../../plugins');
-const { Cluster } = require('../../lib');
+const { ClusterManager } = require('../../lib');
 const { MODULE_KEY, createWorkerEngine, createMasterEngine } = require('../../lib/utils');
 const faker = require('faker');
 
@@ -63,9 +63,9 @@ describe('lib/utils', () => {
       expect(defineSpy.mock.calls[4]).toEqual([ InstallPlugin, [], expect.anything() ]);
       expect(defineSpy.mock.calls[4][2]()).toBeInstanceOf(InstallPlugin);
       expect(defineSpy.mock.calls[5]).toEqual([ ModulePlugin, [{ id: InstallPlugin }, { id: Engine }], ModulePlugin ]);
-      expect(defineSpy.mock.calls[6]).toEqual([ Cluster, [], expect.anything() ]);
-      expect(defineSpy.mock.calls[6][2]()).toBeInstanceOf(Cluster);
-      expect(defineSpy.mock.calls[7]).toEqual([ ClusterPlugin, [{ id: Cluster }], ClusterPlugin ]);
+      expect(defineSpy.mock.calls[6]).toEqual([ ClusterManager, [], expect.anything() ]);
+      expect(defineSpy.mock.calls[6][2]()).toBeInstanceOf(ClusterManager);
+      expect(defineSpy.mock.calls[7]).toEqual([ ClusterPlugin, [{ id: ClusterManager }], ClusterPlugin ]);
 
     });
 

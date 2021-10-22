@@ -13,13 +13,13 @@ const assert = require('assert');
 const { PACKAGE_NAME } = require('../lib/constants');
 const { extractCluster } = require('./utils');
 const { EngineModule } = require('brick-engine'); // eslint-disable-line no-unused-vars
-const { Cluster } = require('../lib/cluster');
+const { ClusterManager } = require('../lib/clusterManager');
 
 const MODULE_KEY = `${PACKAGE_NAME}:plugins:ClusterPlugin`;
 exports.MODULE_KEY = MODULE_KEY;
 const debug = require('debug')(MODULE_KEY);
 
-const CLUSTER = Symbol('CLUSTER');
+const CLUSTER_MANAGER = Symbol('CLUSTER_MANAGER');
 
 class ClusterPlugin {
 
@@ -27,18 +27,18 @@ class ClusterPlugin {
    * 多进程处理插件
    * @see {@link module:lib/engine~Engine} 引擎类
    * @class
-   * @param {Cluster} cluster 集群实例
+   * @param {ClusterManager} clusterManager 集群管理器实例
    */
-  constructor(cluster) {
+  constructor(clusterManager) {
 
-    debug('constructor %s %s', cluster);
+    debug('constructor %s %s', clusterManager);
 
     assert(
-      cluster instanceof Cluster,
-      `[${MODULE_KEY}] constructor Error: wrong cluster`
+      clusterManager instanceof ClusterManager,
+      `[${MODULE_KEY}] constructor Error: wrong clusterManager`
     );
 
-    this[CLUSTER] = cluster;
+    this[CLUSTER_MANAGER] = clusterManager;
 
   }
 
@@ -66,14 +66,14 @@ class ClusterPlugin {
 
     debug('use %s', module);
 
-    /** @type {Cluster} **/
-    const cluster = this[CLUSTER];
+    /** @type {ClusterManager} **/
+    const clusterManager = this[CLUSTER_MANAGER];
     const metadataQueue = extractCluster(module);
     for (const { name, env } of metadataQueue) {
       if (name === undefined) {
         continue;
       }
-      cluster.defineWorker(name, env);
+      clusterManager.defineWorker(name, env);
     }
   }
 

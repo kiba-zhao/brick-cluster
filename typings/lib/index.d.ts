@@ -1,5 +1,5 @@
-import { Cluster } from "./cluster";
+import { ClusterManager } from "./clusterManager";
 import { createMasterEngine } from "./utils";
 import { createWorkerEngine } from "./utils";
 import { clusterSetup } from "./utils";
-export { Cluster, createMasterEngine, createWorkerEngine, clusterSetup };
+export { ClusterManager, createMasterEngine, createWorkerEngine, clusterSetup };

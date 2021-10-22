@@ -31,6 +31,7 @@
     "bin",
     "lib",
     "plugins",
+    "decorators",
     "dist"
   ],
   "repository": {
@@ -91,6 +92,7 @@
       "bin/**/*.js",
       "lib/**/*.js",
       "plugins/**/*.js",
+      "decorators/**/*.js",
       "!**/index.js"
     ],
     "coverageReporters": [

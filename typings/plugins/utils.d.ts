@@ -27,5 +27,5 @@ export function defineCluster(target: any, ...metadatas: ClusterMetadata[]): any
  * @return {EngineModule} 目标引擎模块
  */
 export function replaceCluster(target: any, ...metadatas: ClusterMetadata[]): any;
-import { ClusterName } from "../lib/cluster";
-import { ClusterEnv } from "../lib/cluster";
+import { ClusterName } from "../lib/clusterManager";
+import { ClusterEnv } from "../lib/clusterManager";

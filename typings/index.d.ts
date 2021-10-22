@@ -1,4 +1,4 @@
-import { Cluster } from "./lib";
+import { ClusterManager } from "./lib";
 import { createMasterEngine } from "./lib";
 import { createWorkerEngine } from "./lib";
 import { defineCluster } from "./plugins";
@@ -7,4 +7,5 @@ import { replaceCluster } from "./plugins";
 import { ClusterPlugin } from "./plugins";
 import { ModulePlugin } from "./plugins";
 import { clusterSetup } from "./lib";
-export { Cluster, createMasterEngine, createWorkerEngine, defineCluster, extractCluster, replaceCluster, ClusterPlugin, ModulePlugin, clusterSetup };
+import { Cluster } from "./decorators";
+export { ClusterManager, createMasterEngine, createWorkerEngine, defineCluster, extractCluster, replaceCluster, ClusterPlugin, ModulePlugin, clusterSetup, Cluster };

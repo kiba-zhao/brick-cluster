@@ -6,26 +6,26 @@
  */
 'use strict';
 
-const { Cluster, MODULE_KEY } = require('../../lib/cluster');
+const { ClusterManager, MODULE_KEY } = require('../../lib/clusterManager');
 const os = require('os');
 const faker = require('faker');
 
 describe('lib/cluster', () => {
 
   it('MODULE_KEY', () => {
-    expect(MODULE_KEY).toBe('brick-cluster:lib:Cluster');
+    expect(MODULE_KEY).toBe('brick-cluster:lib:ClusterManager');
   });
 
-  describe('Cluster', () => {
+  describe('ClusterManager', () => {
 
     /** @type {Object} **/
     let processEnv;
-    /** @type {Cluster} **/
-    let cluster;
+    /** @type {ClusterManager} **/
+    let clusterManager;
 
     beforeEach(() => {
       processEnv = JSON.parse(faker.datatype.json());
-      cluster = new Cluster([ faker.system.filePath() ], processEnv);
+      clusterManager = new ClusterManager([ faker.system.filePath() ], processEnv);
     });
 
     describe('defineWorker', () => {
@@ -35,8 +35,8 @@ describe('lib/cluster', () => {
         const name = faker.datatype.string();
         const env = JSON.parse(faker.datatype.json());
 
-        cluster.defineWorker(name, env);
-        cluster.defineWorker(name, env);
+        clusterManager.defineWorker(name, env);
+        clusterManager.defineWorker(name, env);
 
       });
 
@@ -48,19 +48,19 @@ describe('lib/cluster', () => {
 
         const name = faker.datatype.string();
         const env = JSON.parse(faker.datatype.json());
-        cluster.defineWorker(name, env);
+        clusterManager.defineWorker(name, env);
 
-        expect(cluster.workersCountMap.size).toBe(0);
+        expect(clusterManager.workersCountMap.size).toBe(0);
 
         processEnv[name] = faker.random.word();
-        expect(cluster.workersCountMap.size).toBe(0);
+        expect(clusterManager.workersCountMap.size).toBe(0);
 
         processEnv[name] = -1 * faker.datatype.number();
-        expect(cluster.workersCountMap.get(name)).toBe(os.cpus().length - 1);
+        expect(clusterManager.workersCountMap.get(name)).toBe(os.cpus().length - 1);
 
         const count = faker.datatype.number();
         processEnv[name] = count;
-        expect(cluster.workersCountMap.get(name)).toBe(count);
+        expect(clusterManager.workersCountMap.get(name)).toBe(count);
       });
 
     });

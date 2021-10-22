@@ -7,7 +7,8 @@
 'use strict';
 
 const { ClusterPlugin, MODULE_KEY } = require('../../plugins/cluster');
-const { Cluster } = require('../../lib/cluster');
+const { Cluster } = require('../../decorators');
+const { ClusterManager } = require('../../lib/clusterManager');
 const { replaceCluster } = require('../../plugins/utils');
 const faker = require('faker');
 
@@ -25,9 +26,9 @@ describe('plugins/cluster', () => {
     let plugin;
 
     beforeEach(() => {
-      const cluster = new Cluster([ faker.system.filePath() ]);
-      clusterDefineWorkerFn = jest.spyOn(cluster, 'defineWorker');
-      plugin = new ClusterPlugin(cluster);
+      const clusterManager = new ClusterManager([ faker.system.filePath() ]);
+      clusterDefineWorkerFn = jest.spyOn(clusterManager, 'defineWorker');
+      plugin = new ClusterPlugin(clusterManager);
     });
 
     describe('match', () => {
@@ -49,6 +50,17 @@ describe('plugins/cluster', () => {
 
       });
 
+      it('simple with decorators', () => {
+
+        const target = {};
+        const name = faker.datatype.string();
+        const decorator = Cluster({ name });
+        decorator(target);
+
+        expect(plugin.match(target, {})).toBeTruthy();
+        expect(clusterDefineWorkerFn).not.toBeCalled();
+
+      });
     });
 
     describe('use', () => {

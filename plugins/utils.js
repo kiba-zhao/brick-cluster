@@ -14,7 +14,7 @@ const {
   createDefineFunction, createExtractFunction, createReplaceFunction,
 } = require('brick-engine');
 const { EngineModule } = require('brick-engine'); // eslint-disable-line no-unused-vars
-const { ClusterName, ClusterEnv } = require('../lib/cluster'); // eslint-disable-line no-unused-vars
+const { ClusterName, ClusterEnv } = require('../lib/clusterManager'); // eslint-disable-line no-unused-vars
 const { isString, isObject, isArray } = require('lodash');
 const { PACKAGE_NAME } = require('../lib/constants');
 

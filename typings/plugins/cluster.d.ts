@@ -4,9 +4,9 @@ export class ClusterPlugin {
      * 多进程处理插件
      * @see {@link module:lib/engine~Engine} 引擎类
      * @class
-     * @param {Cluster} cluster 集群实例
+     * @param {ClusterManager} clusterManager 集群管理器实例
      */
-    constructor(cluster: Cluster);
+    constructor(clusterManager: ClusterManager);
     /**
      *检查是否为匹配模块
      * @see {@link module:lib/engine~EngineModule} 引擎模块类型
@@ -20,8 +20,8 @@ export class ClusterPlugin {
      * @param {EngineModule} module 使用的模块
      */
     use(module: any): Promise<void>;
-    [CLUSTER]: Cluster;
+    [CLUSTER_MANAGER]: ClusterManager;
 }
-declare const CLUSTER: unique symbol;
-import { Cluster } from "../lib/cluster";
+declare const CLUSTER_MANAGER: unique symbol;
+import { ClusterManager } from "../lib/clusterManager";
 export {};

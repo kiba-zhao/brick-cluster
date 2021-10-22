@@ -6,12 +6,14 @@
  */
 'use strict';
 
-const { Cluster, createMasterEngine, createWorkerEngine, clusterSetup } = require('./lib');
+const { ClusterManager, createMasterEngine, createWorkerEngine, clusterSetup } = require('./lib');
 const { ClusterPlugin, ModulePlugin, defineCluster, extractCluster, replaceCluster } = require('./plugins');
+const { Cluster } = require('./decorators');
 
 module.exports = {
-  Cluster, createMasterEngine, createWorkerEngine,
+  ClusterManager, createMasterEngine, createWorkerEngine,
   defineCluster, extractCluster, replaceCluster,
   ClusterPlugin, ModulePlugin,
   clusterSetup,
+  Cluster,
 };
